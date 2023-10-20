@@ -910,13 +910,14 @@ class ButtonLayout16 extends ButtonLayout {
 
   @override
   List<List<CalculatorButton?>> get portraitLayout => [
-        [onOff, rdown, xy, bsp, fShift, gShift],
-        [gsb, gto, hex, dec, oct, bin],
-        [a, b, c, d, e, f],
-        [rs, sst, n7, n8, n9, div],
-        [sto, rcl, n4, n5, n6, mult],
-        [null, null, n1, n2, n3, minus],
-        [null, null, n0, dot, chs, plus],
+        [a, gsb, gto, rs, onOff],
+        [b, sst, sto, rcl, fShift],
+        [c, rdown, xy, bsp, gShift],
+        [d, hex, dec, oct, bin],
+        [e, n7, n8, n9, div],
+        [f, n4, n5, n6, mult],
+        [null, n1, n2, n3, minus],
+        [null, n0, dot, chs, plus],
       ];
 }
 
@@ -967,18 +968,18 @@ class PortraitButtonFactory16 extends PortraitButtonFactory {
       required double bw}) {
     double y = pos.top;
     result.add(screen.box(
-        Rect.fromLTWH(pos.left + tw - 0.05, y + 0.07, 2 * tw + bw + 0.10, 0.22),
+        Rect.fromLTWH(pos.left + tw - 0.05, y + 2 * tw + 0.4, 2 * tw + bw + 0.10, 0.22),
         CustomPaint(
             painter: UpperLabel('CLEAR', fTextSmallLabelStyle,
                 height * (0.065 + 0.155) / bh))));
     result.add(screen.box(
         Rect.fromLTWH(
-            pos.left + 2 * tw - 0.05, y + th + 0.18, 3 * tw + bw + 0.10, 0.25),
+            pos.left + 1 * tw - 0.05, y + 3 * th + 0.18, 3 * tw + bw + 0.10, 0.25),
         CustomPaint(
             painter:
                 UpperLabel('SHOW', fTextStyle, height * (0.14 + 0.11) / bh))));
     result.add(screen.box(
-        Rect.fromLTWH(pos.left + 2 * tw - 0.05, y + 5 * th + 0.08,
+        Rect.fromLTWH(pos.left + 1 * tw - 0.05, y + 6 * th + 0.08,
             2 * tw + bw + 0.1, 0.22),
         CustomPaint(
             painter: UpperLabel('SET COMPL', fTextSmallLabelStyle,

@@ -1984,13 +1984,14 @@ class ButtonLayout15 extends ButtonLayout {
 
   @override
   List<List<CalculatorButton?>> get portraitLayout => [
-        [sqrt, eX, tenX, yX, reciprocal, onOff],
-        [sst, gto, sin, cos, tan, chs],
-        [rs, gsb, rdown, xy, bsp, eex],
-        [sto, rcl, n7, n8, n9, div],
-        [fShift, gShift, n4, n5, n6, mult],
-        [null, null, n1, n2, n3, minus],
-        [null, null, n0, dot, sum, plus],
+        [sqrt, eX, tenX, yX, reciprocal],
+        [sst, gto, sin, cos, tan],
+        [rs, gsb, rdown, xy, bsp],
+        [onOff, fShift, gShift, sto, rcl],
+        [chs, n7, n8, n9, div],
+        [eex, n4, n5, n6, mult],
+        [null, n1, n2, n3, minus],
+        [null, n0, dot, sum, plus],
       ];
 }
 

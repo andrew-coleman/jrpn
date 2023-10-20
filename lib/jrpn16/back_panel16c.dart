@@ -40,15 +40,15 @@ class BackPanel16 extends BackPanel {
         Container(color: MainScreen.keyboardBaseColor),
         screen.box(Rect.fromLTWH(screen.width - 0.8, 0.0, 0.8, 0.8),
             const Icon(Icons.arrow_back, color: Colors.white)),
+        // screen.box(
+        //     const Rect.fromLTWH(0.1, 0.1, 5.03 * 0.7, 1.98 * 0.7),
+        //     Image.asset(
+        //         'packages/jrpn/assets/NAFO_OFAN_brain_damaged_cartoon_dogs.jpeg')),
+        // screen.box(const Rect.fromLTWH(4.15, -.7, .75, 3), tryzub(1)),
         screen.box(
-            const Rect.fromLTWH(0.1, 0.1, 5.03 * 0.7, 1.98 * 0.7),
-            Image.asset(
-                'packages/jrpn/assets/NAFO_OFAN_brain_damaged_cartoon_dogs.jpeg')),
-        screen.box(const Rect.fromLTWH(4.15, -.7, .75, 3), tryzub(1)),
-        screen.box(
-            const Rect.fromLTWH(1.175, 1.8, 5.65, 6.5), operationTable(5.65)),
-        screen.box(const Rect.fromLTWH(0.45, 8.5, 4.97, 4), errorTable(4.97)),
-        screen.box(const Rect.fromLTWH(6.0, 8.5, 1.57, 3), flagTable(1.57)),
+            const Rect.fromLTWH(0.6, 1.5, 5.65, 6.5), operationTable(5.65)),
+        screen.box(const Rect.fromLTWH(0.2, 8.5, 4.97, 4), errorTable(4.97)),
+        screen.box(const Rect.fromLTWH(5.3, 8.5, 1.57, 3), flagTable(1.57)),
       ]);
 
   @override
@@ -58,15 +58,15 @@ class BackPanel16 extends BackPanel {
         Container(color: MainScreen.keyboardBaseColor),
         screen.box(const Rect.fromLTWH(11.8, 0.4, 0.8, 0.8),
             const Icon(Icons.arrow_back, color: Colors.white)),
-        screen.box(
-            const Rect.fromLTWH(0.1, 0.5, 5.03 * 0.7, 1.98 * 0.7),
-            Image.asset(
-                'packages/jrpn/assets/NAFO_OFAN_brain_damaged_cartoon_dogs.jpeg')),
-        screen.box(const Rect.fromLTWH(1.55, 1.2, .75, 3), tryzub(1)),
-        screen.box(const Rect.fromLTWH(0.10, 3.8, 4.97, 4), errorTable(4.97)),
-        screen.box(Rect.fromLTWH(5.225, 1.1, 5.65, screen.height - 1.5),
+        // screen.box(
+        //     const Rect.fromLTWH(0.1, 0.5, 5.03 * 0.7, 1.98 * 0.7),
+        //     Image.asset(
+        //         'packages/jrpn/assets/NAFO_OFAN_brain_damaged_cartoon_dogs.jpeg')),
+        // screen.box(const Rect.fromLTWH(1.55, 1.2, .75, 3), tryzub(1)),
+        screen.box(const Rect.fromLTWH(0.10, 2.8, 4.97, 4), errorTable(4.97)),
+        screen.box(Rect.fromLTWH(5.225, 0.5, 5.65, screen.height - 1.5),
             operationTable(5.65)),
-        screen.box(const Rect.fromLTWH(11.03, 3, 1.57, 3), flagTable(1.57)),
+        screen.box(const Rect.fromLTWH(11.03, 2.5, 1.57, 3), flagTable(1.57)),
       ]);
 
   Widget errorTable(double widthCM) => table(widthCM, [

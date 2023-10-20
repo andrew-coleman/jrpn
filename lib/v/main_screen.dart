@@ -81,8 +81,8 @@ class ScreenPositioner {
 abstract class OrientedScreen extends StatelessWidget {
   const OrientedScreen({Key? key}) : super(key: key);
 
-  static final ScreenPositioner landscape = ScreenPositioner(12.7, 8);
-  static final ScreenPositioner portrait = ScreenPositioner(8, 12.7);
+  static final ScreenPositioner landscape = ScreenPositioner(12.7, 7);
+  static final ScreenPositioner portrait = ScreenPositioner(7, 12.7);
 
   Widget buildLandscape(BuildContext context, final ScreenPositioner screen);
   Widget buildPortrait(BuildContext context, final ScreenPositioner screen);
@@ -156,17 +156,17 @@ class MainScreen extends OrientedScreen {
             child: Stack(fit: StackFit.expand, children: [
               screen.box(Rect.fromLTWH(0, 0, screen.width, screen.height),
                   CustomPaint(painter: DrawnBackground(screen, extraV))),
-              screen.box(Rect.fromLTWH(0.60, screen.height - 1.5, 0.94, 0.94),
-                  _jrpnIcon()),
+              // screen.box(Rect.fromLTWH(0.60, screen.height - 1.5, 0.94, 0.94),
+              //     _jrpnIcon()),
               screen.box(
                   Rect.fromLTWH(
-                      0.63, 0.6, 6.7, 1.5 * LcdDisplay.heightTweak + extraV),
+                      0.53, 0.2, 5.9, 1.2 * LcdDisplay.heightTweak + extraV),
                   LcdDisplay(controller.model, _showMenu, 11, jrpnState,
                       extraTall: extraV > 0)),
               ...controller
                   .getPortraitButtonFactory(context, screen)
-                  .buildButtons(Rect.fromLTRB(0.7, 2.75 + extraV,
-                      screen.width - 0.7, screen.height - 0.47)),
+                  .buildButtons(Rect.fromLTRB(0.7, 1.55 + extraV,
+                      screen.width - 0.7, screen.height - 0.67)),
               MainMenu(this, screen)
             ])));
   }
@@ -193,15 +193,15 @@ class MainScreen extends OrientedScreen {
           children: [
             screen.box(Rect.fromLTWH(0, 0, screen.width, screen.height),
                 CustomPaint(painter: DrawnBackground(screen, 0))),
-            screen.box(Rect.fromLTWH(iconL, 0.65, 0.94, 0.94), _jrpnIcon()),
+            screen.box(Rect.fromLTWH(iconL, 0.25, 0.94, 0.94), _jrpnIcon()),
             screen.box(
                 Rect.fromLTWH(
-                    lcdLeft, 0.6, lcdWidth, 1.5 * LcdDisplay.heightTweak),
+                    lcdLeft, 0.2, lcdWidth, 1.2 * LcdDisplay.heightTweak),
                 LcdDisplay(controller.model, _showMenu, digitsH, jrpnState)),
             ...controller
                 .getLandscapeButtonFactory(context, screen)
                 .buildButtons(Rect.fromLTRB(
-                    0.7, 2.75, screen.width - 0.7, screen.height - 0.47)),
+                    0.7, 1.75, screen.width - 0.7, screen.height - 0.47)),
             MainMenu(this, screen)
           ],
         ),
@@ -342,25 +342,25 @@ class DrawnBackground extends CustomPainter {
     canvas.drawRect(Rect.fromLTRB(0, 0, size.width, size.height), p);
 
     double x = 0.27 * cm;
-    double y = (2.5 + extraLcdHeight) * cm;
+    double y = (1.4 + extraLcdHeight) * cm;
 
     // Silver along top:
     p.color = _topSilverColor;
     canvas.drawRect(Rect.fromLTRB(x, 0, size.width - x, y), p);
     // Darker silver along very top edge:
-    p.color = const Color(0xff7c7c7c);
-    canvas.drawRect(Rect.fromLTRB(x, 0, size.width - x, 0.2 * cm), p);
+    // p.color = const Color(0xff7c7c7c);
+    // canvas.drawRect(Rect.fromLTRB(x, 0, size.width - x, 0.2 * cm), p);
 
     // Darker on top and bottom of raised frame
-    p.color = const Color(0xff2b2b2f);
-    canvas.drawRect(Rect.fromLTRB(0, 0, x, 0.2 * cm), p);
-    canvas.drawRect(Rect.fromLTRB(size.width - x, 0, size.width, 0.2 * cm), p);
-    canvas.drawRect(
-        Rect.fromLTRB(0, size.height - 0.15 * cm, x, size.height), p);
-    canvas.drawRect(
-        Rect.fromLTRB(
-            size.width - x, size.height - 0.15 * cm, size.width, size.height),
-        p);
+    // p.color = const Color(0xff2b2b2f);
+    // canvas.drawRect(Rect.fromLTRB(0, 0, x, 0.2 * cm), p);
+    // canvas.drawRect(Rect.fromLTRB(size.width - x, 0, size.width, 0.2 * cm), p);
+    // canvas.drawRect(
+    //     Rect.fromLTRB(0, size.height - 0.15 * cm, x, size.height), p);
+    // canvas.drawRect(
+    //     Rect.fromLTRB(
+    //         size.width - x, size.height - 0.15 * cm, size.width, size.height),
+    //     p);
 
     // Outer keyboard base
     p.color = MainScreen.keyboardBaseColor;

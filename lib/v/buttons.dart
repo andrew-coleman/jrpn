@@ -198,10 +198,10 @@ abstract class PortraitButtonFactory extends ButtonFactory {
       : super(context, screen, controller);
 
   @override
-  int get numRows => 7;
+  int get numRows => 8;
 
   @override
-  int get numColumns => 6;
+  int get numColumns => 5;
 
   @override
   double totalButtonHeight(double height, double buttonHeight) =>
@@ -213,7 +213,7 @@ abstract class PortraitButtonFactory extends ButtonFactory {
           required double tw,
           required double bh,
           required double bw}) =>
-      Rect.fromLTWH(pos.left + tw - 0.1, 0.28 + pos.top + 5 * th, bw, bh + th);
+      Rect.fromLTWH(pos.left, 0.28 + pos.top + 6 * th, bw, bh + th);
 
   @override
   List<List<CalculatorButton?>> buttonLayout(ButtonLayout buttons) =>

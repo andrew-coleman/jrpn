@@ -54,16 +54,16 @@ class BackPanel15 extends BackPanel {
         Container(color: MainScreen.keyboardBaseColor),
         screen.box(Rect.fromLTWH(screen.width - 0.8, 0.0, 0.8, 0.8),
             const Icon(Icons.arrow_back, color: Colors.white)),
-        screen.box(
-            const Rect.fromLTWH(0.1, 0.1, 5.03 * 0.57, 1.98 * 0.57),
-            Image.asset(
-                'packages/jrpn/assets/NAFO_OFAN_brain_damaged_cartoon_dogs.jpeg')),
-        screen.box(const Rect.fromLTWH(0.78, 3.6, .75, 3), tryzub(1)),
-        screen.box(const Rect.fromLTWH(0.4, 7.23, 1.6, 2.2), sigmaTable(1.6)),
-        screen.box(const Rect.fromLTWH(2.52, 3.27, 5, 3.4), drawingTable(5)),
-        ...jumpTableList(screen, 3.70, 0.2),
-        screen.box(const Rect.fromLTWH(0.2, 1.57, 3.5, 2.2), metricTable(3.5)),
-        screen.box(const Rect.fromLTWH(2.10, 7.20, 4, 5), numberTable(4.0))
+        // screen.box(
+        //     const Rect.fromLTWH(0.1, 0.1, 5.03 * 0.57, 1.98 * 0.57),
+        //     Image.asset(
+        //         'packages/jrpn/assets/NAFO_OFAN_brain_damaged_cartoon_dogs.jpeg')),
+        // screen.box(const Rect.fromLTWH(0.78, 3.6, .75, 3), tryzub(1)),
+        screen.box(const Rect.fromLTWH(0.2, 3.27, 1.6, 2.2), sigmaTable(1.6)),
+        screen.box(const Rect.fromLTWH(1.52, 3.27, 5, 3.4), drawingTable(5)),
+        ...jumpTableList(screen, 0.2, 0.2),
+        screen.box(const Rect.fromLTWH(3.75, 1.57, 3.5, 2.2), metricTable(3.5)),
+        screen.box(const Rect.fromLTWH(1.10, 7.20, 4, 5), numberTable(4.0))
       ]);
 
   @override
@@ -73,16 +73,16 @@ class BackPanel15 extends BackPanel {
         Container(color: MainScreen.keyboardBaseColor),
         screen.box(const Rect.fromLTWH(11.8, 0.4, 0.8, 0.8),
             const Icon(Icons.arrow_back, color: Colors.white)),
-        screen.box(
-            const Rect.fromLTWH(0.1, 0.5, 5.03 * 0.57, 1.98 * 0.57),
-            Image.asset(
-                'packages/jrpn/assets/NAFO_OFAN_brain_damaged_cartoon_dogs.jpeg')),
-        screen.box(const Rect.fromLTWH(1.05, 1.0, .75, 3), tryzub(1)),
-        screen.box(const Rect.fromLTWH(0.2, 3.96, 1.6, 2.2), sigmaTable(1.6)),
-        screen.box(const Rect.fromLTWH(1.43, 3.76, 5, 3.4), drawingTable(5)),
-        ...jumpTableList(screen, 3.49, 0.7),
-        screen.box(const Rect.fromLTWH(6.83, 0.7, 3.5, 2.2), metricTable(3.5)),
-        screen.box(const Rect.fromLTWH(6.83, 2.40, 4, 5), numberTable(4.0))
+        // screen.box(
+        //     const Rect.fromLTWH(0.1, 0.5, 5.03 * 0.57, 1.98 * 0.57),
+        //     Image.asset(
+        //         'packages/jrpn/assets/NAFO_OFAN_brain_damaged_cartoon_dogs.jpeg')),
+        // screen.box(const Rect.fromLTWH(1.05, 1.0, .75, 3), tryzub(1)),
+        screen.box(const Rect.fromLTWH(0.2, 3.16, 1.6, 2.2), sigmaTable(1.6)),
+        screen.box(const Rect.fromLTWH(1.43, 3.16, 5, 3.4), drawingTable(5)),
+        ...jumpTableList(screen, 3.49, 0.1),
+        screen.box(const Rect.fromLTWH(6.83, 0.1, 3.5, 2.2), metricTable(3.5)),
+        screen.box(const Rect.fromLTWH(6.83, 1.80, 4, 5), numberTable(4.0))
       ]);
 
   List<Widget> jumpTableList(ScreenPositioner screen, double x, double y) => [
