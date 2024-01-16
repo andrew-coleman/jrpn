@@ -1987,9 +1987,9 @@ class ButtonLayout15 extends ButtonLayout {
         [sqrt, eX, tenX, yX, reciprocal],
         [sst, gto, sin, cos, tan],
         [rs, gsb, rdown, xy, bsp],
-        [onOff, fShift, gShift, sto, rcl],
-        [chs, n7, n8, n9, div],
-        [eex, n4, n5, n6, mult],
+        [onOff, chs, eex, sto, rcl],
+        [fShift, n7, n8, n9, div],
+        [gShift, n4, n5, n6, mult],
         [null, n1, n2, n3, minus],
         [null, n0, dot, sum, plus],
       ];

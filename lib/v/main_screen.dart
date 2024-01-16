@@ -61,8 +61,9 @@ const _topSilverColor = Color(0xffcdcdcd);
 class ScreenPositioner {
   final double width; // cm
   final double height; // cm
+  final bool landscape;
 
-  ScreenPositioner(this.width, this.height);
+  ScreenPositioner(this.width, this.height, this.landscape);
 
   /// x, y, w and h are in cm
   Widget box(final Rect pos, final Widget child) {
@@ -81,11 +82,11 @@ class ScreenPositioner {
 abstract class OrientedScreen extends StatelessWidget {
   const OrientedScreen({Key? key}) : super(key: key);
 
-  static final ScreenPositioner landscape = ScreenPositioner(12.7, 7);
-  static final ScreenPositioner portrait = ScreenPositioner(7, 12.7);
+  static final ScreenPositioner landscape = ScreenPositioner(12.7, 7, true);
+  static final ScreenPositioner portrait = ScreenPositioner(6.6, 12.7, false);
 
   Widget buildLandscape(BuildContext context, final ScreenPositioner screen);
-  Widget buildPortrait(BuildContext context, final ScreenPositioner screen);
+  Widget buildPortrait(BuildContext context, final ScreenPositioner screen, BoxConstraints o);
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +97,7 @@ abstract class OrientedScreen extends StatelessWidget {
     // https://github.com/flutter/flutter/issues/82112
     return LayoutBuilder(builder: (BuildContext c2, BoxConstraints o) {
       if (o.hasBoundedHeight && o.hasBoundedWidth && o.maxHeight > o.maxWidth) {
-        return buildPortrait(c2, portrait);
+        return buildPortrait(c2, portrait, o);
       } else {
         return buildLandscape(c2, landscape);
       }
@@ -129,7 +130,7 @@ class MainScreen extends OrientedScreen {
   static const keyFrameSilver = Color(0xffdbdad1);
 
   @override
-  Widget buildPortrait(BuildContext context, ScreenPositioner screen) {
+  Widget buildPortrait(BuildContext context, ScreenPositioner screen, BoxConstraints o) {
     final display = controller.model.display;
     // In portrait, we first shrink the font down, up to 18 digits (enough
     // for a 16 digit hex or binary number).  Beyond that, we grow the display
@@ -141,34 +142,95 @@ class MainScreen extends OrientedScreen {
     final lcdLines = max(1, (display.lcdDigits - 3) ~/ 16) + 1;
     final extraV = (lcdLines - 2) * 0.8;
     if (extraV > 0) {
-      screen = ScreenPositioner(screen.width, screen.height + extraV);
+      screen = ScreenPositioner(screen.width, screen.height + extraV, screen.landscape);
       // So yes, we might shrink the whole calculator, if it was just
       // fitting vertically.  The size only changes when the display mode
       // (BIN/HEX/DEC) changes, or the word size changes.  That's a pretty
       // rare thing, so I'm OK with the buttons and stuff moving around a
       // little.
     }
+
+    final double aspectRatio = screen.width / screen.height;
+    double stackHeight = o.maxHeight - o.maxWidth / aspectRatio - 40;
+
+    controller.model.settings.systemOverlaysDisabled = false;
+
+    if (!controller.model.settings.stackEnabled.value || stackHeight < 0) {
+      return Container(
+        alignment: Alignment.center,
+        color: deadZoneColor,
+        child: pCalc(context, screen, extraV));
+    }
     return Container(
         alignment: Alignment.center,
         color: deadZoneColor,
-        child: AspectRatio(
-            aspectRatio: screen.width / screen.height,
-            child: Stack(fit: StackFit.expand, children: [
-              screen.box(Rect.fromLTWH(0, 0, screen.width, screen.height),
-                  CustomPaint(painter: DrawnBackground(screen, extraV))),
-              // screen.box(Rect.fromLTWH(0.60, screen.height - 1.5, 0.94, 0.94),
-              //     _jrpnIcon()),
-              screen.box(
-                  Rect.fromLTWH(
-                      0.53, 0.2, 5.9, 1.2 * LcdDisplay.heightTweak + extraV),
-                  LcdDisplay(controller.model, _showMenu, 11, jrpnState,
-                      extraTall: extraV > 0)),
-              ...controller
-                  .getPortraitButtonFactory(context, screen)
-                  .buildButtons(Rect.fromLTRB(0.7, 1.55 + extraV,
-                      screen.width - 0.7, screen.height - 0.67)),
-              MainMenu(this, screen)
-            ])));
+        child: Column(
+          children:[
+            const Spacer(flex: 10),
+            Row(
+              children: [
+                const Spacer(flex: 50),
+                SizedBox(
+                  width: o.maxWidth-20,
+                  height: stackHeight * 3/4,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      _YZTViewer(model.internalSnapshot, model, model.currentStack, MainScreen.deadZoneColor, Colors.white),
+                    ],
+                  ),
+                )
+              ],
+            ),
+            const Spacer(flex: 1),
+            pCalc(context, screen, extraV),
+            //const Spacer(flex: 1),
+            // SizedBox(
+            //   width: o.maxWidth-10,
+            //   height: stackHeight / 4,
+            //   child: Stack(
+            //     fit: StackFit.expand,
+            //     children: [
+            //       _YZTViewer(model.internalSnapshot, model, model.currentLastX, true),
+            //     ],
+            //   ),
+            // ),
+          ]
+        )
+    );
+  }
+
+  Widget pCalc(BuildContext context, final ScreenPositioner screen, double extraV) {
+    return AspectRatio(
+      aspectRatio: screen.width / screen.height,
+      child: Stack(fit: StackFit.expand, children: [
+        screen.box(Rect.fromLTWH(0, 0, screen.width, screen.height),
+            CustomPaint(painter: DrawnBackground(screen, extraV))),
+        controller.model.settings.stackEnabled.value ?
+          screen.box(Rect.fromLTWH(0.6, screen.height - 0.38, 4.9, 0.35), _YZTViewer(model.internalSnapshot, model, model.currentLastX, MainScreen.keyboardBaseColor, Colors.white)) : SizedBox.shrink(),
+        screen.box(Rect.fromLTWH(0, 0, screen.width, 1.5),
+          GestureDetector(
+              onTap: () { 
+                  Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                      builder: (context) => controller.getBackPanel()));
+              },
+            ) 
+        ),
+        // screen.box(Rect.fromLTWH(0.60, screen.height - 1.5, 0.94, 0.94),
+        //     _jrpnIcon()),
+        screen.box(
+            Rect.fromLTWH(
+                0.33, 0.2, 5.9, 1.2 * LcdDisplay.heightTweak + extraV),
+            LcdDisplay(controller.model, _showMenu, 11, jrpnState,
+                extraTall: extraV > 0)),
+        ...controller
+            .getPortraitButtonFactory(context, screen)
+            .buildButtons(Rect.fromLTRB(0.5, 1.55 + extraV,
+                screen.width - 0.5, screen.height - 0.67)),
+        MainMenu(this, screen)
+      ]));
   }
 
   @override
@@ -182,6 +244,8 @@ class MainScreen extends OrientedScreen {
     final lcdLeft = 2.0 - 1.47 * expander;
     final lcdWidth = 6.7 + 3.83 * expander;
     final iconL = screen.width - 1.82 + 0.056 * (digitsH - 11);
+    final icon = model.modelName == '15C' ? 'packages/jrpn/assets/hp15c.jpg' : 'packages/jrpn/assets/hp16c.jpg';
+    controller.model.settings.systemOverlaysDisabled = true;
     return Container(
       // Midnight blue for slop when aspect ratio not matched
       alignment: Alignment.center,
@@ -193,15 +257,30 @@ class MainScreen extends OrientedScreen {
           children: [
             screen.box(Rect.fromLTWH(0, 0, screen.width, screen.height),
                 CustomPaint(painter: DrawnBackground(screen, 0))),
-            screen.box(Rect.fromLTWH(iconL, 0.25, 0.94, 0.94), _jrpnIcon()),
+            controller.model.settings.stackEnabled.value ?
+              screen.box(Rect.fromLTWH(0.8, screen.height - 0.38, 4.9, 0.35), _YZTViewer(model.internalSnapshot, model, model.currentLastX, MainScreen.keyboardBaseColor, Colors.white)) : SizedBox.shrink(),
+            screen.box(Rect.fromLTWH(0, 0, screen.width, 1.5),
+              GestureDetector(
+                  onTap: () { 
+                      Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                          builder: (context) => controller.getBackPanel()));
+                  },
+                ) 
+            ),
+            controller.model.settings.stackEnabled.value ?
+              screen.box(Rect.fromLTWH(screen.width - 3.9, 0.1, 3.3, 1.1), _YZTViewer(model.internalSnapshot, model, model.currentStack, _topSilverColor, Colors.black))
+            :
+              screen.box(Rect.fromLTWH(iconL, 0.18, 0.94, 0.94), Image.asset(icon)),
             screen.box(
                 Rect.fromLTWH(
-                    lcdLeft, 0.2, lcdWidth, 1.2 * LcdDisplay.heightTweak),
+                    lcdLeft, 0.1, lcdWidth, 1.2 * LcdDisplay.heightTweak),
                 LcdDisplay(controller.model, _showMenu, digitsH, jrpnState)),
             ...controller
                 .getLandscapeButtonFactory(context, screen)
                 .buildButtons(Rect.fromLTRB(
-                    0.7, 1.75, screen.width - 0.7, screen.height - 0.47)),
+                    0.7, 1.6, screen.width - 0.7, screen.height - 0.47)),
             MainMenu(this, screen)
           ],
         ),
@@ -267,7 +346,7 @@ class MainScreen extends OrientedScreen {
 
   Widget _jrpnIcon() {
     final Paint p = Paint()
-      ..color = const Color(0xffe6edf5)
+      ..color = MainScreen.keyFrameSilver //const Color(0xffe6edf5)
       ..style = PaintingStyle.fill;
     const border = 3;
     return Container(
@@ -289,7 +368,27 @@ class MainScreen extends OrientedScreen {
                           children: [
                             CustomPaint(
                                 painter: _RoundedBox(widthCM: 0.9, paint: p)),
-                            Center(child: ScalableImageWidget(si: icon))
+                            Container(
+                                padding: const EdgeInsets.all(1.0),
+                                decoration: BoxDecoration (
+                                  shape: BoxShape.circle,
+                                  color: MainScreen.keyboardBaseColor,
+                                ),
+                                child: FittedBox(
+                                  fit: BoxFit.contain,
+                                  child: Text(
+                                    'hp',
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      //fontSize: 1.0,
+                                      fontFamily: 'LogoFont',
+                                      fontWeight: FontWeight.w900,
+                                      fontStyle: FontStyle.italic,
+                                      color: MainScreen.keyFrameSilver)
+                                  )
+                                )
+                            )
+                            //Center(child: ScalableImageWidget(si: icon))
                           ],
                         )),
                     const Spacer(flex: 2),
@@ -308,7 +407,7 @@ class MainScreen extends OrientedScreen {
                                     style: const TextStyle(
                                         fontSize: 0.3, // in cm
                                         fontFamily: 'LogoFont',
-                                        fontWeight: FontWeight.w500,
+                                        fontWeight: FontWeight.w900,
                                         color: Colors.black))),
                           ],
                         )),
@@ -341,8 +440,8 @@ class DrawnBackground extends CustomPainter {
       ..style = PaintingStyle.fill;
     canvas.drawRect(Rect.fromLTRB(0, 0, size.width, size.height), p);
 
-    double x = 0.27 * cm;
-    double y = (1.4 + extraLcdHeight) * cm;
+    double x = (screen.landscape ? 0.27 : 0.07) * cm;
+    double y = ((screen.landscape ? 1.3 : 1.4) + extraLcdHeight) * cm;
 
     // Silver along top:
     p.color = _topSilverColor;
@@ -422,7 +521,7 @@ class _RoundedBox extends CustomPainter {
   @override
   void paint(Canvas c, Size size) {
     final double cm = size.width / widthCM;
-    final outlineR = Radius.circular(0.05 * cm);
+    final outlineR = Radius.circular(0.1 * cm);
     c.drawRRect(
         RRect.fromLTRBR(0, 0, size.width, size.height, outlineR), paintArg);
   }
@@ -685,6 +784,13 @@ class __SettingsMenuState extends State<_SettingsMenu> {
               unawaited(widget.app.model.writeToPersistentStorage());
             },
             child: const Text('Show Menu Icon')),
+        CheckedPopupMenuItem(
+            checked: settings.stackEnabled.value,
+            value: () {
+              settings.stackEnabled.value = !settings.stackEnabled.value;
+              unawaited(widget.app.model.writeToPersistentStorage());
+            },
+            child: const Text('Show Stack')),
         ...(settings.isMobilePlatform
             ? [
                 CheckedPopupMenuItem(
@@ -1509,6 +1615,64 @@ class ErrorDialog extends StatelessWidget {
           child: const Text('OK'),
         )
       ],
+    );
+  }
+}
+
+class _YZTViewer extends StatefulWidget {
+  final Observable<ModelSnapshot> text;
+  final Model directModel;
+  final Function generator;
+  final Color background;
+  final Color foreground;
+
+  const _YZTViewer(this.text, this.directModel, this.generator, this.background, this.foreground);
+
+  @override
+  State<_YZTViewer> createState() => _YZTViewerState();
+}
+
+class _YZTViewerState extends State<_YZTViewer> {
+  late final _newTextRef = _newText;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.text.addObserver(_newTextRef);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    widget.text.removeObserver(_newTextRef);
+    widget.directModel.optimizeInternalSnapshot();
+  }
+
+  void _newText(ModelSnapshot text) {
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        padding: const EdgeInsets.all(1.0),
+        decoration: BoxDecoration (
+          color: widget.background,
+        ),
+        child: FittedBox(
+          fit: BoxFit.contain,
+          alignment: Alignment.centerLeft,
+          child: Text(
+            widget.generator(),
+            textAlign: TextAlign.left,
+            style: TextStyle(
+              //fontSize: 1.0,
+              fontFamily: 'Courier',
+              fontWeight: FontWeight.w900,
+              // fontStyle: FontStyle.italic,
+              color: widget.foreground)
+          )
+        )
     );
   }
 }

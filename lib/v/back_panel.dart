@@ -53,7 +53,7 @@ abstract class BackPanel extends OrientedScreen {
     ..color = MainScreen.keyFrameSilver;
 
   @override
-  Widget buildPortrait(BuildContext context, final ScreenPositioner screen) {
+  Widget buildPortrait(BuildContext context, final ScreenPositioner screen, BoxConstraints o) {
     return GestureDetector(
         onTap: () => Navigator.pop(context),
         child: Container(

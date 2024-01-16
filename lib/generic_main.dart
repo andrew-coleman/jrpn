@@ -872,6 +872,7 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
         onKey: (FocusNode _, RawKeyEvent e) => controller.keyboard.onKey(e));
     _uiChangeObserver = _uiChanged;
     widget._changed.addObserver(_uiChangeObserver);
+    controller.model.settings.stackEnabled.addObserver(_uiChangeObserver);
     WidgetsBinding.instance.addObserver(this);
     _lastLifecycleState = WidgetsBinding.instance.lifecycleState;
     unawaited(_init());
@@ -881,6 +882,7 @@ class JrpnState extends State<Jrpn> with WidgetsBindingObserver {
   void dispose() {
     super.dispose();
     widget._changed.removeObserver(_uiChangeObserver);
+    controller.model.settings.stackEnabled.removeObserver(_uiChangeObserver);
     _disposed = true;
     _linksSubscription?.cancel();
     WidgetsBinding.instance.removeObserver(this);

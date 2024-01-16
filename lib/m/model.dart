@@ -197,6 +197,7 @@ enum LongNumbersSetting { window, growLCD, shrinkDigits }
 class Settings {
   final Model _model;
   final Observable<bool> menuEnabled = Observable(true);
+  final Observable<bool> stackEnabled = Observable(true);
   LongNumbersSetting _longNumbers = LongNumbersSetting.window;
   bool _euroComma = false;
   bool _hideComplement = false;
@@ -233,11 +234,13 @@ class Settings {
 
   Settings(this._model) {
     menuEnabled.addObserver((_) => _model.needsSave = true);
+    stackEnabled.addObserver((_) => _model.needsSave = true);
     showAccelerators.addObserver((_) => _model.needsSave = true);
   }
 
   void _reset() {
     menuEnabled.value = true;
+    stackEnabled.value = true;
     _longNumbers = LongNumbersSetting.window;
     _euroComma = false;
     _hideComplement = false;
@@ -424,6 +427,7 @@ class Settings {
   Map<String, dynamic> toJson() {
     final r = <String, dynamic>{
       'menuEnabled': menuEnabled.value,
+      'stackEnabled': stackEnabled.value,
       'windowEnabled': _longNumbers ==
           LongNumbersSetting.window, // For backwards compatibility
       'longNumbers': _longNumbers.index,
@@ -472,6 +476,7 @@ class Settings {
   ///
   void decodeJson(Map<String, dynamic> json) {
     menuEnabled.value = json['menuEnabled'] as bool;
+    stackEnabled.value = json['stackEnabled'] as bool;
     final longNumbers = json['longNumbers'] as int?;
     if (longNumbers == null) {
       // Old settings
@@ -1376,6 +1381,24 @@ abstract class Model<OT extends ProgramOperation> implements NumStatus {
   void addStuffToSnapshot(StringBuffer buf) {}
 
   LcdContents selfTestContents();
+
+  String currentStack() {
+    String f(v) => formatValue(v).trim();
+    String s(n) => '${f(_stack[n])}' + (isComplexMode && _imaginaryStack![n] != Value.zero ? ' + ${f(_imaginaryStack![n])}i' : '');
+    final stackBuf = StringBuffer();
+    stackBuf.writeln('T: ${s(3)}');
+    stackBuf.writeln('Z: ${s(2)}');
+    stackBuf.write('Y: ${s(1)}');
+    if (isComplexMode) {
+      stackBuf.write('\nX: ${s(0)}');
+    }
+    return stackBuf.toString();
+  }
+
+  String currentLastX() {
+    String f(v) => formatValue(v).trim();
+    return 'LSTx: ${f(lastX)}' + (isComplexMode && _lastXImaginary != Value.zero ? ' + ${f(_lastXImaginary)}i' : '');
+  }
 }
 
 class ModelSnapshot {
